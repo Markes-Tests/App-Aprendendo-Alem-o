@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz de Palavras em Alemão</title>
+  <style>
+    :root {
+      --primary-color: #4a6da7;
+      --secondary-color: #f0f5ff;
+      --accent-color: #ff9800;
+      --text-color: #333;
+      --bg-color: #fff;
+      --card-bg: #f9f9f9;
+      --correct-color: #4caf50;
+      --wrong-color: #f44336;
+      --border-color: #ddd;
+    }
+
+    .dark-theme {
+      --primary-color: #5d8adb;
+      --secondary-color: #2c3e50;
+      --accent-color: #ff9800;
+      --text-color: #f0f0f0;
+      --bg-color: #1a1a2e;
+      --card-bg: #2a2a3e;
+      --correct-color: #81c784;
+      --wrong-color: #e57373;
+      --border-color: #444;
+    }
+
+    * {
+      box-sizing: border-box;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--primary-color);
+      font-size: 1.8rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: var(--text-color);
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--border-color);
+    }
+
+    .question {
+      font-size: 1.4em;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .word {
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .category-badge {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.7em;
+      display: inline-block;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    input {
+      padding: 12px;
+      font-size: 1em;
+      flex-grow: 1;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #3a5a8f;
+    }
+
+    button.secondary {
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+    }
+
+    button.secondary:hover {
+      background-color: #dae5f5;
+    }
+
+    button.accent {
+      background-color: var(--accent-color);
+    }
+
+    button.accent:hover {
+      background-color: #e68a00;
+    }
+
+    button.icon-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+    }
+
+    .feedback {
+      margin-top: 15px;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+    }
+
+    .feedback.correct {
+      background-color: rgba(76, 175, 80, 0.1);
+      color: var(--correct-color);
+      display: block;
+    }
+
+    .feedback.wrong {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: var(--wrong-color);
+      display: block;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .stat-box {
+      flex: 1;
+      min-width: 120px;
+      padding: 10px;
+      background-color: var(--card-bg);
+      border-radius: 5px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .stat-value {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .stat-label {
+      font-size: 0.9em;
+      color: var(--text-color);
+    }
+
+    .options-panel {
+      margin-top: 20px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .option-card {
+      padding: 10px;
+      background-color: var(--card-bg);
+      border-radius: 5px;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+    }
+
+    .option-card:hover {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+
+    .option-card.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .hint {
+      margin-top: 10px;
+      font-style: italic;
+      color: var(--primary-color);
+    }
+
+    .progress-container {
+      width: 100%;
+      background-color: var(--card-bg);
+      border-radius: 5px;
+      margin: 15px 0;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: var(--primary-color);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    @media (max-width: 600px) {
+      .question {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .input-group {
+        flex-direction: column;
+      }
+      
+      .stats {
+        flex-direction: column;
+      }
+      
+      .options-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Quiz de Alemão</h1>
+    <div class="controls">
+      <button id="settingsBtn" class="secondary icon-button">⚙️ Opções</button>
+      <button id="themeToggle" class="theme-toggle">🌙</button>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat-box">
+      <div class="stat-value" id="scoreValue">0</div>
+      <div class="stat-label">Pontuação</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value" id="streakValue">0</div>
+      <div class="stat-label">Sequência</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value" id="accuracyValue">0%</div>
+      <div class="stat-label">Precisão</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="question">
+      <div>
+        <span id="questionText"></span>
+        <span id="categoryBadge" class="category-badge"></span>
+      </div>
+      <div>
+        <button id="speakBtn" class="secondary icon-button" title="Ouvir pronúncia">🔊</button>
+        <button id="hintBtn" class="secondary icon-button" title="Mostrar dica">💡</button>
+      </div>
+    </div>
+    <div id="hintText" class="hint" style="display: none;"></div>
+    <div class="input-group">
+      <input type="text" id="answer" placeholder="Digite sua resposta..." autocomplete="off">
+      <button id="checkBtn">Verificar</button>
+    </div>
+    <div id="feedback" class="feedback"></div>
+    <div class="progress-container">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+  </div>
+
+  <div id="settingsPanel" class="options-panel" style="display: none;">
+    <div class="card">
+      <h3>Categorias</h3>
+      <div id="categoriesContainer" class="options-grid">
+        <!-- Categorias serão adicionadas dinamicamente -->
+      </div>
+      
+      <h3>Modo de Estudo</h3>
+      <div id="modesContainer" class="options-grid">
+        <div class="option-card active" data-mode="de-pt">Alemão → Português</div>
+        <div class="option-card" data-mode="pt-de">Português → Alemão</div>
+        <div class="option-card" data-mode="listen">Ouvir → Escrever</div>
+      </div>
+      
+      <h3>Dificuldade</h3>
+      <div id="difficultyContainer" class="options-grid">
+        <div class="option-card active" data-difficulty="all">Todas</div>
+        <div class="option-card" data-difficulty="easy">Fácil</div>
+        <div class="option-card" data-difficulty="medium">Médio</div>
+        <div class="option-card" data-difficulty="hard">Difícil</div>
+      </div>
+      
+      <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+        <button id="resetStatsBtn" class="secondary">Reiniciar Estatísticas</button>
+        <button id="reviewMistakesBtn" class="accent">Revisar Erros</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Organização das palavras por categorias
+    const wordsByCategory = {
+      saudacoes: [
+        ["Hallo", "olá", "easy"],
+        ["Tschüss", "tchau", "easy"],
+        ["Guten Morgen", "bom dia", "easy"],
+        ["Guten Abend", "boa noite", "easy"],
+        ["Gute Nacht", "boa noite (antes de dormir)", "easy"],
+        ["Wie geht's?", "como vai?", "easy"],
+        ["Mir geht's gut", "estou bem", "medium"],
+        ["Entschuldigung", "desculpe", "medium"]
+      ],
+      basico: [
+        ["Ja", "sim", "easy"],
+        ["Nein", "não", "easy"],
+        ["Danke", "obrigado", "easy"],
+        ["Bitte", "por favor", "easy"],
+        ["Wie heißt du?", "qual é o seu nome?", "medium"],
+        ["Ich heiße...", "meu nome é...", "medium"],
+        ["Woher kommst du?", "de onde você é?", "medium"],
+        ["Ich komme aus...", "eu sou de...", "medium"],
+        ["Sprechen Sie Deutsch?", "você fala alemão?", "medium"],
+        ["Ich spreche ein wenig Deutsch", "eu falo um pouco de alemão", "medium"]
+      ],
+      frases_uteis: [
+        ["Könnten Sie das bitte wiederholen?", "você pode repetir isso, por favor?", "medium"],
+        ["Haben Sie einen Stift?", "você tem uma caneta?", "medium"],
+        ["Wie viel kostet das?", "quanto custa isso?", "medium"],
+        ["Haben Sie einen Tisch für zwei?", "você tem uma mesa para dois?", "medium"],
+        ["Könnte ich die Rechnung bitte haben?", "eu poderia ter a conta, por favor?", "hard"],
+        ["Entschuldigung, wo ist die Toilette?", "com licença, onde fica o banheiro?", "medium"]
+      ],
+      adjetivos: [
+        ["Kalt", "frio", "easy"],
+        ["Heiß", "quente", "easy"],
+        ["Gut", "bem", "easy"],
+        ["Schlecht", "ruim", "easy"],
+        ["Langsam", "devagar", "easy"],
+        ["Schnell", "rápido", "easy"],
+        ["Groß", "grande", "easy"],
+        ["Klein", "pequeno", "easy"],
+        ["Lang", "longo", "easy"],
+        ["Kurz", "curto", "easy"],
+        ["Schön", "bonito", "easy"],
+        ["Hässlich", "feio", "medium"],
+        ["Jung", "jovem", "easy"],
+        ["Alt", "velho", "easy"],
+        ["Neu", "novo", "easy"],
+        ["Altmodisch", "antiquado", "hard"],
+        ["Modern", "moderno", "easy"],
+        ["Reich", "rico", "medium"],
+        ["Arm", "pobre", "medium"],
+        ["Sicher", "seguro", "medium"],
+        ["Gefährlich", "perigoso", "medium"],
+        ["Frei", "livre", "medium"],
+        ["Besetzt", "ocupado", "medium"],
+        ["Voll", "cheio", "easy"],
+        ["Leerer", "vazio", "medium"]
+      ],
+      posicoes: [
+        ["Erste", "primeiro", "easy"],
+        ["Letzte", "último", "easy"],
+        ["Hoch", "alto", "easy"],
+        ["Niedrig", "baixo", "medium"],
+        ["Vorne", "à frente", "medium"],
+        ["Hinten", "atrás", "medium"],
+        ["Links", "esquerda", "easy"],
+        ["Rechts", "direita", "easy"],
+        ["Oben", "em cima", "easy"],
+        ["Unten", "embaixo", "easy"],
+        ["Direkt", "direto", "medium"],
+        ["Indirekt", "indireto", "hard"],
+        ["Weit", "longe", "easy"],
+        ["Nah", "perto", "easy"]
+      ],
+      tempo: [
+        ["Morgen", "manhã", "easy"],
+        ["Mittag", "meio-dia", "easy"],
+        ["Abend", "tarde", "easy"],
+        ["Nacht", "noite", "easy"],
+        ["Jahr", "ano", "easy"],
+        ["Monat", "mês", "easy"],
+        ["Woche", "semana", "easy"],
+        ["Tag", "dia", "easy"],
+        ["Minute", "minuto", "easy"],
+        ["Sekunde", "segundo", "easy"],
+        ["Uhr", "relógio", "easy"]
+      ],
+      comida: [
+        ["Frühstück", "café da manhã", "medium"],
+        ["Mittagessen", "almoço", "medium"],
+        ["Abendessen", "jantar", "medium"],
+        ["Snacks", "lanches", "easy"],
+        ["Trinken", "bebida", "easy"],
+        ["Essen", "comida", "easy"],
+        ["Kaffee", "café", "easy"],
+        ["Tee", "chá", "easy"],
+        ["Wasser", "água", "easy"],
+        ["Bier", "cerveja", "easy"],
+        ["Wein", "vinho", "easy"],
+        ["Saft", "suco", "easy"],
+        ["Brot", "pão", "easy"],
+        ["Käse", "queijo", "easy"],
+        ["Fleisch", "carne", "easy"],
+        ["Gemüse", "legumes", "medium"],
+        ["Obst", "fruta", "easy"],
+        ["Salat", "salada", "easy"],
+        ["Suppe", "sopa", "easy"],
+        ["Pizza", "pizza", "easy"],
+        ["Reis", "arroz", "easy"],
+        ["Kartoffeln", "batatas", "medium"],
+        ["Spaghetti", "espaguete", "easy"],
+        ["Schokolade", "chocolate", "easy"],
+        ["Kuchen", "bolo", "easy"],
+        ["Eis", "sorvete", "easy"]
+      ],
+      frutas: [
+        ["Apfel", "maçã", "easy"],
+        ["Banane", "banana", "easy"],
+        ["Orange", "laranja", "easy"],
+        ["Traube", "uva", "medium"],
+        ["Erdbeere", "morango", "medium"],
+        ["Kirsche", "cereja", "medium"],
+        ["Zitrone", "limão", "medium"],
+        ["Pfirsich", "pêssego", "hard"],
+        ["Blaubeere", "mirtilo", "hard"],
+        ["Birne", "pera", "medium"],
+        ["Melone", "melão", "easy"]
+      ],
+      vegetais: [
+        ["Karotte", "cenoura", "medium"],
+        ["Tomate", "tomate", "easy"],
+        ["Gurke", "pepino", "medium"],
+        ["Paprika", "pimentão", "medium"],
+        ["Zwiebel", "cebola", "medium"],
+        ["Knoblauch", "alho", "medium"],
+        ["Salat", "alface", "medium"],
+        ["Brokkoli", "brócolis", "medium"],
+        ["Blumenkohl", "couve-flor", "hard"],
+        ["Pilz", "cogumelo", "medium"],
+        ["Spinat", "espinafre", "medium"],
+        ["Bohnen", "feijão", "medium"],
+        ["Erbsen", "ervilhas", "medium"],
+        ["Linsen", "lentilhas", "hard"]
+      ],
+      proteinas: [
+        ["Wurst", "linguiça", "medium"],
+        ["Hähnchen", "frango", "medium"],
+        ["Rindfleisch", "carne de boi", "hard"],
+        ["Schweinefleisch", "carne de porco", "hard"],
+        ["Lammfleisch", "carne de cordeiro", "hard"],
+        ["Fisch", "peixe", "easy"],
+        ["Meeresfrüchte", "frutos do mar", "hard"],
+        ["Tofu", "tofu", "easy"],
+        ["Eier", "ovos", "easy"]
+      ],
+      laticinios: [
+        ["Milch", "leite", "easy"],
+        ["Butter", "manteiga", "medium"],
+        ["Käse", "queijo", "easy"],
+        ["Joghurt", "iogurte", "medium"]
+      ],
+      condimentos: [
+        ["Honig", "mel", "medium"],
+        ["Marmelade", "geléia", "medium"],
+        ["Zucker", "açúcar", "medium"],
+        ["Salz", "sal", "easy"],
+        ["Pfeffer", "pimenta", "medium"],
+        ["Öl", "óleo", "easy"],
+        ["Essig", "vinagre", "medium"],
+        ["Senf", "mostarda", "medium"],
+        ["Ketchup", "ketchup", "easy"],
+        ["Mayonnaise", "maionese", "medium"]
+      ],
+      utensilios: [
+        ["Löffel", "colher", "easy"],
+        ["Gabel", "garfo", "easy"],
+        ["Messer", "faca", "easy"],
+        ["Teller", "prato", "medium"],
+        ["Glas", "copo", "easy"],
+        ["Becher", "caneca", "medium"],
+        ["Tasse", "xícara", "medium"],
+        ["Schale", "tigela", "medium"],
+        ["Topf", "panela", "medium"],
+        ["Pfanne", "frigideira", "medium"]
+      ],
+      eletrodomesticos: [
+        ["Ofen", "forno", "medium"],
+        ["Mikrowelle", "micro-ondas", "medium"],
+        ["Herd", "fogão", "medium"],
+        ["Kühlschrank", "geladeira", "hard"],
+        ["Waschmaschine", "máquina de lavar", "hard"],
+        ["Trockner", "secadora", "medium"],
+        ["Staubsauger", "aspirador de pó", "hard"]
+      ],
+      tecnologia: [
+        ["Fernseher", "televisão", "medium"],
+        ["Computer", "computador", "easy"],
+        ["Handy", "celular", "easy"],
+        ["Kamera", "câmera", "easy"]
+      ],
+      casa: [
+        ["Lampe", "lâmpada", "easy"],
+        ["Fenster", "janela", "medium"],
+        ["Tür", "porta", "easy"],
+        ["Boden", "chão", "easy"],
+        ["Wand", "parede", "easy"],
+        ["Decke", "teto", "medium"],
+        ["Stuhl", "cadeira", "easy"],
+        ["Tisch", "mesa", "easy"]
+      ],
+      escritorio: [
+        ["Buch", "livro", "easy"],
+        ["Stift", "caneta", "easy"],
+        ["Papier", "papel", "easy"],
+        ["Schere", "tesoura", "medium"],
+        ["Bleistift", "lápis", "medium"],
+        ["Radiergummi", "borracha", "hard"],
+        ["Hefte", "caderno", "medium"]
+      ],
+      acessorios: [
+        ["Rucksack", "mochila", "medium"],
+        ["Koffer", "mala", "medium"],
+        ["Brille", "óculos", "medium"],
+        ["Hut", "chapéu", "easy"],
+        ["Schuhe", "sapatos", "medium"],
+        ["Jacke", "jaqueta", "medium"],
+        ["Hose", "calça", "medium"],
+        ["Kleid", "vestido", "medium"],
+        ["T-Shirt", "camiseta", "easy"],
+        ["Pullover", "suéter", "medium"],
+        ["Schal", "cachecol", "medium"],
+        ["Handschuhe", "luvas", "medium"]
+      ]
+    };
+
+    // Tradução dos nomes das categorias
+    const categoryNames = {
+      saudacoes: "Saudações",
+      basico: "Básico",
+      frases_uteis: "Frases Úteis",
+      adjetivos: "Adjetivos",
+      posicoes: "Posições",
+      tempo: "Tempo",
+      comida: "Comida",
+      frutas: "Frutas",
+      vegetais: "Vegetais",
+      proteinas: "Proteínas",
+      laticinios: "Laticínios",
+      condimentos: "Condimentos",
+      utensilios: "Utensílios",
+      eletrodomesticos: "Eletrodomésticos",
+      tecnologia: "Tecnologia",
+      casa: "Casa",
+      escritorio: "Escritório",
+      acessorios: "Acessórios"
+    };
+
+    // Variáveis de estado
+    let currentWord = {};
+    let currentCategory = "";
+    let selectedCategories = Object.keys(wordsByCategory);
+    let studyMode = "de-pt"; // de-pt, pt-de, listen
+    let difficulty = "all"; // all, easy, medium, hard
+    let reviewMode = false;
+    let mistakesList = [];
+    
+    // Estatísticas
+    let stats = {
+      score: 0,
+      streak: 0,
+      correct: 0,
+      total: 0,
+      sessionWords: 0
+    };
+
+    // Elementos DOM
+    const questionText = document.getElementById("questionText");
+    const categoryBadge = document.getElementById("categoryBadge");
+    const answerInput = document.getElementById("answer");
+    const feedbackElement = document.getElementById("feedback");
+    const scoreValue = document.getElementById("scoreValue");
+    const streakValue = document.getElementById("streakValue");
+    const accuracyValue = document.getElementById("accuracyValue");
+    const progressBar = document.getElementById("progressBar");
+    const settingsPanel = document.getElementById("settingsPanel");
+    const categoriesContainer = document.getElementById("categoriesContainer");
+    const modesContainer = document.getElementById("modesContainer");
+    const difficultyContainer = document.getElementById("difficultyContainer");
+    const hintBtn = document.getElementById("hintBtn");
+    const hintText = document.getElementById("hintText");
+    const themeToggle = document.getElementById("themeToggle");
+
+    // Inicialização
+    document.addEventListener("DOMContentLoaded", () => {
+      // Carregar dados salvos
+      loadSavedData();
+      
+      // Inicializar categorias
+      initializeCategories();
+      
+      // Configurar eventos
+      setupEventListeners();
+      
+      // Iniciar o quiz
+      getRandomWord();
+      
+      // Atualizar estatísticas
+      updateStats();
+    });
+
+    // Função para carregar dados salvos
+    function loadSavedData() {
+      const savedStats = localStorage.getItem("germanQuizStats");
+      if (savedStats) {
+        stats = JSON.parse(savedStats);
+      }
+      
+      const savedSettings = localStorage.getItem("germanQuizSettings");
+      if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        selectedCategories = settings.categories || selectedCategories;
+        studyMode = settings.mode || studyMode;
+        difficulty = settings.difficulty || difficulty;
+      }
+      
+      const savedMistakes = localStorage.getItem("germanQuizMistakes");
+      if (savedMistakes) {
+        mistakesList = JSON.parse(savedMistakes);
+      }
+      
+      // Carregar tema
+      const savedTheme = localStorage.getItem("germanQuizTheme");
+      if (savedTheme === "dark") {
+        document.body.classList.add("dark-theme");
+        themeToggle.textContent = "☀️";
+      }
+    }
+
+    // Função para inicializar categorias
+    function initializeCategories() {
+      // Limpar container
+      categoriesContainer.innerHTML = "";
+      
+      // Adicionar opção "Todas"
+      const allOption = document.createElement("div");
+      allOption.className = "option-card" + (selectedCategories.length === Object.keys(wordsByCategory).length ? " active" : "");
+      allOption.textContent = "Todas";
+      allOption.dataset.category = "all";
+      categoriesContainer.appendChild(allOption);
+      
+      // Adicionar cada categoria
+      Object.keys(categoryNames).forEach(category => {
+        const categoryOption = document.createElement("div");
+        categoryOption.className = "option-card" + (selectedCategories.includes(category) ? " active" : "");
+        categoryOption.textContent = categoryNames[category];
+        categoryOption.dataset.category = category;
+        categoriesContainer.appendChild(categoryOption);
+      });
+      
+      // Atualizar modos de estudo
+      Array.from(modesContainer.children).forEach(mode => {
+        mode.classList.toggle("active", mode.dataset.mode === studyMode);
+      });
+      
+      // Atualizar dificuldade
+      Array.from(difficultyContainer.children).forEach(diff => {
+        diff.classList.toggle("active", diff.dataset.difficulty === difficulty);
+      });
+    }
+
+    // Configurar event listeners
+    function setupEventListeners() {
+      // Botão de verificar resposta
+      document.getElementById("checkBtn").addEventListener("click", checkAnswer);
+      
+      // Verificar resposta ao pressionar Enter
+      answerInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          checkAnswer();
+        }
+      });
+      
+      // Botão de ouvir pronúncia
+      document.getElementById("speakBtn").addEventListener("click", () => {
+        if (studyMode === "listen") {
+          speakGerman(currentWord[0]);
+        } else if (studyMode === "de-pt") {
+          speakGerman(currentWord[0]);
+        } else {
+          speakGerman(currentWord[1]);
+        }
+      });
+      
+      // Botão de configurações
+      document.getElementById("settingsBtn").addEventListener("click", () => {
+        settingsPanel.style.display = settingsPanel.style.display === "none" ? "block" : "none";
+      });
+      
+      // Seleção de categorias
+      categoriesContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("option-card")) {
+          const category = e.target.dataset.category;
+          
+          if (category === "all") {
+            // Selecionar ou desselecionar todas
+            const allSelected = selectedCategories.length === Object.keys(wordsByCategory).length;
+            
+            if (allSelected) {
+              // Se todas estiverem selecionadas, manter apenas a primeira
+              selectedCategories = [Object.keys(wordsByCategory)[0]];
+            } else {
+              // Selecionar todas
+              selectedCategories = Object.keys(wordsByCategory);
+            }
+          } else {
+            // Alternar seleção individual
+            if (selectedCategories.includes(category)) {
+              // Não permitir desselecionar a última categoria
+              if (selectedCategories.length > 1) {
+                selectedCategories = selectedCategories.filter(c => c !== category);
+              }
+            } else {
+              selectedCategories.push(category);
+            }
+          }
+          
+          // Atualizar UI
+          initializeCategories();
+          
+          // Salvar configurações
+          saveSettings();
+          
+          // Obter nova palavra
+          getRandomWord();
+        }
+      });
+      
+      // Seleção de modo de estudo
+      modesContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("option-card")) {
+          studyMode = e.target.dataset.mode;
+          
+          // Atualizar UI
+          Array.from(modesContainer.children).forEach(mode => {
+            mode.classList.toggle("active", mode.dataset.mode === studyMode);
+          });
+          
+          // Salvar configurações
+          saveSettings();
+          
+          // Obter nova palavra
+          getRandomWord();
+        }
+      });
+      
+      // Seleção de dificuldade
+      difficultyContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("option-card")) {
+          difficulty = e.target.dataset.difficulty;
+          
+          // Atualizar UI
+          Array.from(difficultyContainer.children).forEach(diff => {
+            diff.classList.toggle("active", diff.dataset.difficulty === difficulty);
+          });
+          
+          // Salvar configurações
+          saveSettings();
+          
+          // Obter nova palavra
+          getRandomWord();
+        }
+      });
+      
+      // Botão de reiniciar estatísticas
+      document.getElementById("resetStatsBtn").addEventListener("click", () => {
+        if (confirm("Tem certeza que deseja reiniciar todas as estatísticas?")) {
+          stats = {
+            score: 0,
+            streak: 0,
+            correct: 0,
+            total: 0,
+            sessionWords: 0
+          };
+          
+          updateStats();
+          saveStats();
+        }
+      });
+      
+      // Botão de revisar erros
+      document.getElementById("reviewMistakesBtn").addEventListener("click", () => {
+        if (mistakesList.length === 0) {
+          alert("Você ainda não cometeu erros para revisar!");
+          return;
+        }
+        
+        reviewMode = !reviewMode;
+        document.getElementById("reviewMistakesBtn").textContent = reviewMode ? "Voltar ao Normal" : "Revisar Erros";
+        
+        getRandomWord();
+      });
+      
+      // Botão de dica
+      hintBtn.addEventListener("click", showHint);
+      
+      // Alternar tema
+      themeToggle.addEventListener("click", toggleTheme);
+    }
+
+    // Função para alternar tema
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle("dark-theme");
+      themeToggle.textContent = isDark ? "☀️" : "🌙";
+      localStorage.setItem("germanQuizTheme", isDark ? "dark" : "light");
+    }
+
+    // Função para mostrar dica
+    function showHint() {
+      if (hintText.style.display === "none") {
+        let hint = "";
+        
+        if (studyMode === "de-pt" || studyMode === "listen") {
+          // Dica para tradução alemão -> português
+          const answer = currentWord[1];
+          hint = `Começa com "${answer.charAt(0).toUpperCase()}" e tem ${answer.length} letras`;
+        } else {
+          // Dica para tradução português -> alemão
+          const answer = currentWord[0];
+          hint = `Começa com "${answer.charAt(0).toUpperCase()}" e tem ${answer.length} letras`;
+        }
+        
+        hintText.textContent = hint;
+        hintText.style.display = "block";
+        
+        // Penalidade por usar dica
+        stats.score = Math.max(0, stats.score - 1);
+        updateStats();
+      } else {
+        hintText.style.display = "none";
+      }
+    }
+
+    // Função para salvar configurações
+    function saveSettings() {
+      const settings = {
+        categories: selectedCategories,
+        mode: studyMode,
+        difficulty: difficulty
+      };
+      
+      localStorage.setItem("germanQuizSettings", JSON.stringify(settings));
+    }
+
+    // Função para salvar estatísticas
+    function saveStats() {
+      localStorage.setItem("germanQuizStats", JSON.stringify(stats));
+    }
+
+    // Função para salvar lista de erros
+    function saveMistakes() {
+      localStorage.setItem("germanQuizMistakes", JSON.stringify(mistakesList));
+    }
+
+    // Função para obter palavra aleatória
+    function getRandomWord() {
+      let availableWords = [];
+      
+      if (reviewMode && mistakesList.length > 0) {
+        // Modo de revisão - usar apenas palavras da lista de erros
+        const randomIndex = Math.floor(Math.random() * mistakesList.length);
+        const mistake = mistakesList[randomIndex];
+        
+        // Encontrar a palavra original
+        for (const category in wordsByCategory) {
+          const wordIndex = wordsByCategory[category].findIndex(word => 
+            word[0] === mistake[0] && word[1] === mistake[1]
+          );
+          
+          if (wordIndex !== -1) {
+            currentWord = wordsByCategory[category][wordIndex];
+            currentCategory = category;
+            break;
+          }
+        }
+      } else {
+        // Modo normal - filtrar palavras por categorias selecionadas e dificuldade
+        selectedCategories.forEach(category => {
+          const categoryWords = wordsByCategory[category].filter(word => {
+            if (difficulty === "all") return true;
+            return word[2] === difficulty;
+          });
+          
+          availableWords = [...availableWords, ...categoryWords.map(word => ({
+            word: word,
+            category: category
+          }))];
+        });
+        
+        if (availableWords.length === 0) {
+          alert("Nenhuma palavra disponível com os filtros atuais. Tente outras categorias ou dificuldades.");
+          return;
+        }
+        
+        const randomIndex = Math.floor(Math.random() * availableWords.length);
+        currentWord = availableWords[randomIndex].word;
+        currentCategory = availableWords[randomIndex].category;
+      }
+      
+      // Atualizar interface
+      updateQuestion();
+      
+      // Limpar campos
+      answerInput.value = "";
+      feedbackElement.className = "feedback";
+      feedbackElement.textContent = "";
+      hintText.style.display = "none";
+      
+      // Focar no campo de resposta
+      answerInput.focus();
+      
+      // Atualizar barra de progresso
+      stats.sessionWords++;
+      const progress = Math.min(100, (stats.sessionWords / 10) * 100);
+      progressBar.style.width = `${progress}%`;
+      
+      // No modo de escuta, falar a palavra automaticamente
+      if (studyMode === "listen") {
+        setTimeout(() => {
+          speakGerman(currentWord[0]);
+        }, 500);
+      }
+    }
+
+    // Função para atualizar a pergunta
+    function updateQuestion() {
+      if (studyMode === "de-pt") {
+        questionText.innerHTML = `Traduza para português: <span class="word">${currentWord[0]}</span>`;
+      } else if (studyMode === "pt-de") {
+        questionText.innerHTML = `Traduza para alemão: <span class="word">${currentWord[1]}</span>`;
+      } else if (studyMode === "listen") {
+        questionText.innerHTML = `Escreva em alemão o que você ouvir`;
+      }
+      
+      categoryBadge.textContent = categoryNames[currentCategory];
+    }
+
+    // Função para verificar resposta
+    function checkAnswer() {
+      const userAnswer = answerInput.value.trim().toLowerCase();
+      
+      if (userAnswer === "") {
+        return;
+      }
+      
+      let correctAnswer = "";
+      let userCorrect = false;
+      
+      if (studyMode === "de-pt") {
+        correctAnswer = currentWord[1].toLowerCase();
+        userCorrect = userAnswer === correctAnswer;
+      } else if (studyMode === "pt-de" || studyMode === "listen") {
+        correctAnswer = currentWord[0].toLowerCase();
+        userCorrect = userAnswer === correctAnswer;
+      }
+      
+      // Atualizar estatísticas
+      stats.total++;
+      
+      if (userCorrect) {
+        // Resposta correta
+        feedbackElement.className = "feedback correct";
+        feedbackElement.textContent = "Correto! 🎉";
+        
+        stats.correct++;
+        stats.streak++;
+        stats.score += stats.streak;
+        
+        // Se estiver no modo de revisão e acertar, remover da lista de erros
+        if (reviewMode) {
+          mistakesList = mistakesList.filter(mistake => 
+            !(mistake[0] === currentWord[0] && mistake[1] === currentWord[1])
+          );
+          saveMistakes();
+        }
+      } else {
+        // Resposta incorreta
+        feedbackElement.className = "feedback wrong";
+        
+        // Verificar se está próximo (tolerância para erros pequenos)
+        const similarity = calculateSimilarity(userAnswer, correctAnswer);
+        
+        if (similarity > 0.7) {
+          feedbackElement.textContent = `Quase! A resposta correta é: ${studyMode === "de-pt" ? currentWord[1] : currentWord[0]}`;
+        } else {
+          feedbackElement.textContent = `Incorreto. A resposta correta é: ${studyMode === "de-pt" ? currentWord[1] : currentWord[0]}`;
+        }
+        
+        stats.streak = 0;
+        
+        // Adicionar à lista de erros se não estiver já
+        const alreadyInList = mistakesList.some(mistake => 
+          mistake[0] === currentWord[0] && mistake[1] === currentWord[1]
+        );
+        
+        if (!alreadyInList && !reviewMode) {
+          mistakesList.push([currentWord[0], currentWord[1]]);
+          saveMistakes();
+        }
+      }
+      
+      // Atualizar estatísticas na interface
+      updateStats();
+      
+      // Salvar estatísticas
+      saveStats();
+      
+      // Próxima palavra após um tempo
+      setTimeout(getRandomWord, 2000);
+    }
+
+    // Função para calcular similaridade entre strings (para tolerância a erros pequenos)
+    function calculateSimilarity(s1, s2) {
+      let longer = s1;
+      let shorter = s2;
+      
+      if (s1.length < s2.length) {
+        longer = s2;
+        shorter = s1;
+      }
+      
+      const longerLength = longer.length;
+      if (longerLength === 0) {
+        return 1.0;
+      }
+      
+      return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+    }
+
+    // Função para calcular distância de edição (algoritmo de Levenshtein)
+    function editDistance(s1, s2) {
+      s1 = s1.toLowerCase();
+      s2 = s2.toLowerCase();
+      
+      const costs = [];
+      
+      for (let i = 0; i <= s1.length; i++) {
+        let lastValue = i;
+        for (let j = 0; j <= s2.length; j++) {
+          if (i === 0) {
+            costs[j] = j;
+          } else if (j > 0) {
+            let newValue = costs[j - 1];
+            if (s1.charAt(i - 1) !== s2.charAt(j - 1)) {
+              newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+            }
+            costs[j - 1] = lastValue;
+            lastValue = newValue;
+          }
+        }
+        if (i > 0) {
+          costs[s2.length] = lastValue;
+        }
+      }
+      
+      return costs[s2.length];
+    }
+
+    // Função para atualizar estatísticas na interface
+    function updateStats() {
+      scoreValue.textContent = stats.score;
+      streakValue.textContent = stats.streak;
+      
+      const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+      accuracyValue.textContent = `${accuracy}%`;
+    }
+
+    // Função para falar em alemão
+    function speakGerman(word) {
+      const voices = window.speechSynthesis.getVoices();
+      const germanVoice = voices.find(voice => voice.lang === "de-DE" || voice.lang.startsWith("de"));
+      
+      const utterance = new SpeechSynthesisUtterance(word);
+      if (germanVoice) {
+        utterance.voice = germanVoice;
+      } else {
+        console.warn("Voz em alemão não disponível no seu navegador.");
+      }
+      utterance.lang = "de-DE";
+      utterance.rate = 0.9; // Velocidade um pouco mais lenta para melhor compreensão
+      
+      speechSynthesis.speak(utterance);
+    }
+
+    // Garantir que as vozes estejam carregadas
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = () => {
+        // Vozes carregadas
+      };
+    }
+  </script>
+</body>
+</html>
